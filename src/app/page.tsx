@@ -1,5 +1,6 @@
+"use client";
 import { useState, FormEvent } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { EnvelopeIcon, LockClosedIcon } from "@heroicons/react/16/solid";
 
@@ -20,8 +21,7 @@ export default function Home() {
       //Almacenamiento local del token simulado
       localStorage.setItem("authToken", "mockToken123");
 
-      router.push;
-      ("/auth/dash");
+      router.push("/auth/dash");
     } else {
       setErrorMessage("Email y/o Contraseña Incorrectos");
     }
@@ -48,7 +48,7 @@ export default function Home() {
             <div className="flex flex-row justify-between items-center border bg-white border-current w-[90%] md:w-[320px] mx-[20%] mb-[2%] rounded py-[7px] px-[10px]">
               <input
                 placeholder="Email"
-                name="nombre-de-usuario"
+                name="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -60,7 +60,7 @@ export default function Home() {
             <div className="flex flex-row justify-between items-center border bg-white border-current w-[90%] md:w-[320px] mx-[20%] mb-[2%] rounded py-[7px] px-[10px]">
               <input
                 placeholder="Contraseña"
-                name="contrasenia"
+                name="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -76,6 +76,7 @@ export default function Home() {
               Acceder
             </button>
           </form>
+          {errorMessage && <p>{errorMessage}</p>}
         </div>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
