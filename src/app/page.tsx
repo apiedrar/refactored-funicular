@@ -1,58 +1,62 @@
 import Image from "next/image";
+import { EnvelopeIcon } from "@heroicons/react/16/solid";
 
 export default function Home() {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+        <div className="flex flex-col justify-center items-center">
+          <h3 className="text-xl md:text-3xl">¡Bievenido, estimado cliente!</h3>
+          <div className="flex flex-row my-[10%]">
             <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              className="block self-center"
+              src="/T2pagos_logoCuadrado_rojo.svg"
+              alt="Logo T1pagos"
+              width={300}
+              height={90}
+              priority
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
+        </div>
+        <div className="flex flex-col justify-center items-center w-[300px] md:w-[400px] border border-current border-t-4 border-t-red-600 rounded-t">
+          <h4 className="block text-xl my-[5%] mx-[10%]">
+            Autenticarse para iniciar sesión
+          </h4>
+          <form action="" className="flex flex-col justify-center items-center">
+            <div className="flex flex-row justify-between items-center border bg-white border-current w-[90%] md:w-[320px] mx-[20%] mb-[2%] rounded py-[7px] px-[30px]">
+              <input
+                placeholder="Email"
+                name="nombredeusuario"
+                type="email"
+                className="block bg-transparent"
+              />
+              <Image
+                aria-hidden
+                src="https://nextjs.org/icons/email.svg"
+                alt="File icon"
+                width={16}
+                height={16}
+              />
+            </div>
+            <div className="flex flex-row justify-between items-center border bg-white border-current w-[90%] md:w-[320px] mx-[20%] mb-[2%] rounded py-[7px] px-[30px]">
+              <input
+                placeholder="Contraseña"
+                name="contrasenia"
+                type="password"
+                className="block bg-transparent"
+              />
+              <ArrowUpRightIcon className="size-6 inline" />
+            </div>
+            <button className="block bg-red-600 w-[90%] md:w-[320px] px-[25%] py-[2%] mx-[10%] mb-[5%] rounded">
+              Acceder
+            </button>
+          </form>
         </div>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <a
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          href="https://docs.t1pagos.com/docs/guardar-tarjeta.html"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -63,11 +67,11 @@ export default function Home() {
             width={16}
             height={16}
           />
-          Learn
+          Documentación
         </a>
         <a
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          href="https://docs.t1pagos.com/api.html"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -78,7 +82,7 @@ export default function Home() {
             width={16}
             height={16}
           />
-          Examples
+          Ejemplos
         </a>
         <a
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
@@ -93,7 +97,7 @@ export default function Home() {
             width={16}
             height={16}
           />
-          Go to nextjs.org →
+          Ir a T1pagos →
         </a>
       </footer>
     </div>
