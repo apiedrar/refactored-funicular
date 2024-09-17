@@ -1,7 +1,32 @@
+import { useState, FormEvent } from "react";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import { EnvelopeIcon, LockClosedIcon } from "@heroicons/react/16/solid";
 
 export default function Home() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const router = useRouter();
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    //Credenciales para propósitos demostrativos
+    const mockEmail = "t1test@ejemplo.mx";
+    const mockPassword = "t1P4g0s_t3cht3st";
+
+    if (email === mockEmail && password === mockPassword) {
+      //Almacenamiento local del token simulado
+      localStorage.setItem("authToken", "mockToken123");
+
+      router.push;
+      ("/auth/dash");
+    } else {
+      setErrorMessage("Email y/o Contraseña Incorrectos");
+    }
+  }
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
@@ -16,13 +41,19 @@ export default function Home() {
           <h4 className="block text-xl my-[5%] mx-[10%]">
             Autenticarse para iniciar sesión
           </h4>
-          <form action="" className="flex flex-col justify-center items-center">
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col justify-center items-center"
+          >
             <div className="flex flex-row justify-between items-center border bg-white border-current w-[90%] md:w-[320px] mx-[20%] mb-[2%] rounded py-[7px] px-[10px]">
               <input
                 placeholder="Email"
-                name="nombredeusuario"
+                name="nombre-de-usuario"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="inline p-[2%] font-normal text-black bg-transparent w-full h-full"
+                required
               />
               <EnvelopeIcon className="inline size-6 text-gray-400" />
             </div>
@@ -31,11 +62,17 @@ export default function Home() {
                 placeholder="Contraseña"
                 name="contrasenia"
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="inline p-[2%] font-normal text-black bg-transparent w-full h-full"
+                required
               />
               <LockClosedIcon className="inline size-6 text-gray-400" />
             </div>
-            <button className="block bg-red-600 w-[90%] md:w-[320px] px-[25%] py-[2%] mx-[10%] mb-[5%] rounded">
+            <button
+              type="submit"
+              className="block bg-red-600 w-[90%] md:w-[320px] px-[25%] py-[2%] mx-[10%] mb-[5%] rounded"
+            >
               Acceder
             </button>
           </form>
