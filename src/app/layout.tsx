@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Alejandro Piedra Rios - Test técnico",
+  title: "Test Técnico - Alejandro Piedra Rios",
   description: "Creado con Next.js",
 };
 

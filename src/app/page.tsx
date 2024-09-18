@@ -1,82 +1,83 @@
 "use client";
-import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import CardHoldersName from "./CardHoldersName.jsx";
+import Cvv from "./Cvv.jsx";
+import CardNum from "./CardNum.jsx";
+import ExpirationDate from "./ExpirationDate.jsx";
+import CardCompanies from "./CardCompanies.jsx";
 import Image from "next/image";
-import { EnvelopeIcon, LockClosedIcon } from "@heroicons/react/16/solid";
 
 export default function Home() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const router = useRouter();
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    //Credenciales para propósitos demostrativos
-    const mockEmail = "t1test@ejemplo.mx";
-    const mockPassword = "t1P4g0s_t3cht3st";
-
-    if (email === mockEmail && password === mockPassword) {
-      //Almacenamiento local del token simulado
-      localStorage.setItem("authToken", "mockToken123");
-
-      router.push("/auth/dash");
-    } else {
-      setErrorMessage("Email y/o Contraseña Incorrectos");
-    }
-  }
+  const [cardHoldersName, setHoldersName] = useState("");
+  const [cvv, setCvv] = useState(null);
+  const [cardNumber, setCardNumber] = useState(null);
+  const [expiringMonth, setExpiringMonth] = useState(null);
+  const [expiringYear, setExpiringYear] = useState(null);
+  const authToken =
+    "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiMjExNDNiZDllMDBmYWRhZDc2MmE1NWJiNWQ2NTUwNGFlOTAzZjMwYThlNjZhMjVmNzA3NjUyYTk3YjBjN2U5Y2U1MTVmMmZkYmMwMzc3YWIiLCJpYXQiOjE3MjE0NDE3MjAuMDE3MTkxLCJuYmYiOjE3MjE0NDE3MjAuMDE3MTk2LCJleHAiOjE3ODQ1MTM3MjAuMDExNTI2LCJzdWIiOiIxMjYiLCJzY29wZXMiOlsiY2xpZW50ZS10YXJqZXRhcyIsImNsaWVudGUtdHJhbnNhY2Npb25lcyIsImNsaWVudGUtY2xpZW50ZXMiLCJjbGllbnRlLXN1c2NyaXBjaW9uZXMiLCJjbGllbnRlLXBsYW5lcyIsImNsaWVudGUtYW50aWZyYXVkZSIsImNsaWVudGUtd2ViaG9va3MiXX0.jzCf5AFt30FkaEZFuJdK9KZHVVxkLRP6oBGDr4Jdlhz4CtVj5_2V8acSax4jyHyAdsOkMt9ANyyZlciX_6UHHEO5bsmVBeuAAX125jcsqH1Tyac7NU3qKAfQdPGHarWGXqrHvDz6DBICgTYiLIBWRZROE9Ctue6ooj-rpyFxC3GU7nFzLie4NtSsK9AQXb5kSQUXb3cuPA_UI6BMANZRHyxpzxcIAl3I_NC6xFSU5F6q6MoZV4cO8S5FCyjAStpp8RaCPQrPa1UlgfM4l5q8fAhVNwvmp1-C28t7yXC7WQewbNemqn0uSIH2o-8g1N98QT9axS-Oss3R9TE2k6vW2LL-um2b1vLW60zNp0mmZ4_eGpU4q0KL6bEAapKtiHVsfwIwBobWwkyhQbibaxs88SdA76ewKJzMuIHnzpvg_Nc8tO80Bv3hiqCkOTU-YFjY3EEJvHGBnQj-f2swXq5HvQYqRjRk5nutjcmc7NfyKLjfm2TEihOIoy4MKNMZ6FYeWf_4GUzFK720_Q5JPNSXiUUs7SeMCmohpagVmGA3-mirFc5CbSrMyMiVqAwQeXiKTe6J__lWkWCA1Z8KEmA3KqRNl3en_0Dc-wdO7oroOo63iRzylxw0BEU4L4EEjdF63sMoNbWDnpuY1GLZ-zOMLEtMlLbZYMuoQbsXT6PfwMg";
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <div className="flex flex-col justify- items-center">
-          <h3 className="text-xl md:text-3xl">¡Bievenido, estimado cliente!</h3>
-          <div className="flex flex-row justify-center items-baseline my-[10%]">
-            <h1 className="inline text-7xl font-black text-red-500">T1</h1>
-            <h2 className="inline text-5xl font-bold text-gray-500">Pagos</h2>
-          </div>
-        </div>
-        <div className="flex flex-col justify-center items-center w-[300px] md:w-[400px] border border-current border-t-4 border-t-red-600 rounded-t">
-          <h4 className="block text-xl my-[5%] mx-[10%]">
-            Autenticarse para iniciar sesión
-          </h4>
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col justify-center items-center"
-          >
-            <div className="flex flex-row justify-between items-center border bg-white border-current w-[90%] md:w-[320px] mx-[20%] mb-[2%] rounded py-[7px] px-[10px]">
-              <input
-                placeholder="Email"
-                name="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="inline p-[2%] font-normal text-black bg-transparent w-full h-full"
-                required
-              />
-              <EnvelopeIcon className="inline size-6 text-gray-400" />
+        <div className="flex flex-col justify-center items-center w-[400px] md:w-[700px]">
+          <h2 className="block text-3xl my-[5%] mx-[10%]">Datos de Pago</h2>
+          <form className="flex flex-col justify-center items-center">
+            <div className="flex flex-row flex-wrap justify-between items-center bg-transparent mb-[2%] py-[7px] px-[3%]">
+              <label htmlFor="nombre-titular" className="text-lg mr-[20%]">
+                Nombre del Titular
+              </label>
+              <label htmlFor="cvv" className="text-lg ml-[13%]">
+                CVV
+              </label>
+              <br />
+              <div className="flex flex-row justify-center items-center">
+                <CardHoldersName
+                  cardHoldersName={cardHoldersName}
+                  setHoldersName={setHoldersName}
+                />
+                <Cvv cvv={cvv} setCvv={setCvv} />
+              </div>
             </div>
-            <div className="flex flex-row justify-between items-center border bg-white border-current w-[90%] md:w-[320px] mx-[20%] mb-[2%] rounded py-[7px] px-[10px]">
-              <input
-                placeholder="Contraseña"
-                name="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="inline p-[2%] font-normal text-black bg-transparent w-full h-full"
-                required
-              />
-              <LockClosedIcon className="inline size-6 text-gray-400" />
+            <div className="flex flex-row flex-wrap justify- items-center bg-transparent mb-[2%] py-[7px] px-[3%]">
+              <label htmlFor="numero-tarjeta" className="text-lg">
+                Número de la Tarjeta
+              </label>
+              <br />
+              <div className="flex flex-row w-full">
+                <CardNum
+                  cardNumber={cardNumber}
+                  setCardNumber={setCardNumber}
+                />
+              </div>
+            </div>
+            <div className="flex flex-row flex-wrap justify-between items-center bg-transparent mb-[2%] py-[7px] px-[3%]">
+              <label htmlFor="fecha-de-expiracion" className="text-lg">
+                Fecha de Expiración
+              </label>
+              <br />
+              <div className="flex flex-row ml-[1%]">
+                <ExpirationDate
+                  expiringMonth={expiringMonth}
+                  setExpiringMonth={setExpiringMonth}
+                  expiringYear={expiringYear}
+                  setExpiringYear={setExpiringYear}
+                />
+                <CardCompanies />
+              </div>
             </div>
             <button
-              type="submit"
-              className="block bg-red-600 w-[90%] md:w-[320px] px-[25%] py-[2%] mx-[10%] mb-[5%] rounded"
+              onSubmit={(formData) => {
+                fetch("https://api.sandbox.claropagos.com/v1/cargo", {
+                  method: "POST",
+                  body: formData,
+                });
+              }}
+              className="flex justify-center items-center self-center text-white bg-red-600 w-[90%] md:w-[4rem] h-[3rem] px-[25%] py-[2%] mx-[10%] mb-[5%] rounded"
             >
-              Acceder
+              Pagar
             </button>
           </form>
-          {errorMessage && <p>{errorMessage}</p>}
+          <div></div>
         </div>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
