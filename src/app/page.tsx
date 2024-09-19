@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import CardHoldersName from "./CardHoldersName.jsx";
+import CardHoldersLastName from "./CardHoldersLastName.jsx";
+import CardHoldersSecondLastName from "./CardHoldersSecondLastName.jsx";
 import Cvv from "./Cvv.jsx";
 import CardNum from "./CardNum.jsx";
 import ExpirationDate from "./ExpirationDate.jsx";
@@ -8,30 +10,144 @@ import CardCompanies from "./CardCompanies.jsx";
 import Image from "next/image";
 
 export default function Home() {
-  const amountDue = 280.99;
+  const amountDue = 20.99;
   const mexicanPeso = new Intl.NumberFormat("es-MX", {
     style: "currency",
     currency: "MXN",
     maximumFractionDigits: 2,
   });
   const [cardHoldersName, setHoldersName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [secondLastName, setSecondLastName] = useState("");
   const [cvv, setCvv] = useState(undefined);
   const [cardNumber, setCardNumber] = useState(undefined);
   const [expiringMonth, setExpiringMonth] = useState(undefined);
   const [expiringYear, setExpiringYear] = useState(undefined);
-  const authToken =
-    cardNumber == "4111111111111111"
-      ? "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiMjExNDNiZDllMDBmYWRhZDc2MmE1NWJiNWQ2NTUwNGFlOTAzZjMwYThlNjZhMjVmNzA3NjUyYTk3YjBjN2U5Y2U1MTVmMmZkYmMwMzc3YWIiLCJpYXQiOjE3MjE0NDE3MjAuMDE3MTkxLCJuYmYiOjE3MjE0NDE3MjAuMDE3MTk2LCJleHAiOjE3ODQ1MTM3MjAuMDExNTI2LCJzdWIiOiIxMjYiLCJzY29wZXMiOlsiY2xpZW50ZS10YXJqZXRhcyIsImNsaWVudGUtdHJhbnNhY2Npb25lcyIsImNsaWVudGUtY2xpZW50ZXMiLCJjbGllbnRlLXN1c2NyaXBjaW9uZXMiLCJjbGllbnRlLXBsYW5lcyIsImNsaWVudGUtYW50aWZyYXVkZSIsImNsaWVudGUtd2ViaG9va3MiXX0.jzCf5AFt30FkaEZFuJdK9KZHVVxkLRP6oBGDr4Jdlhz4CtVj5_2V8acSax4jyHyAdsOkMt9ANyyZlciX_6UHHEO5bsmVBeuAAX125jcsqH1Tyac7NU3qKAfQdPGHarWGXqrHvDz6DBICgTYiLIBWRZROE9Ctue6ooj-rpyFxC3GU7nFzLie4NtSsK9AQXb5kSQUXb3cuPA_UI6BMANZRHyxpzxcIAl3I_NC6xFSU5F6q6MoZV4cO8S5FCyjAStpp8RaCPQrPa1UlgfM4l5q8fAhVNwvmp1-C28t7yXC7WQewbNemqn0uSIH2o-8g1N98QT9axS-Oss3R9TE2k6vW2LL-um2b1vLW60zNp0mmZ4_eGpU4q0KL6bEAapKtiHVsfwIwBobWwkyhQbibaxs88SdA76ewKJzMuIHnzpvg_Nc8tO80Bv3hiqCkOTU-YFjY3EEJvHGBnQj-f2swXq5HvQYqRjRk5nutjcmc7NfyKLjfm2TEihOIoy4MKNMZ6FYeWf_4GUzFK720_Q5JPNSXiUUs7SeMCmohpagVmGA3-mirFc5CbSrMyMiVqAwQeXiKTe6J__lWkWCA1Z8KEmA3KqRNl3en_0Dc-wdO7oroOo63iRzylxw0BEU4L4EEjdF63sMoNbWDnpuY1GLZ-zOMLEtMlLbZYMuoQbsXT6PfwMg"
-      : "";
+
   const paymentUrl = "https://api.sandbox.claropagos.com/v1/cargo";
   /* const cancellationReqUrl = `https://api.sandbox.claropagos.com/v1/cargo/${cargo.id}/cancelar`;
   const refundRequestUrl = `https://api.sandbox.claropagos.com/v1/cargo/${cargo.id}/reembolsar`; */
 
   const paymentSubmition = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const authToken =
+      cardNumber == "4111111111111111"
+        ? "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiMjExNDNiZDllMDBmYWRhZDc2MmE1NWJiNWQ2NTUwNGFlOTAzZjMwYThlNjZhMjVmNzA3NjUyYTk3YjBjN2U5Y2U1MTVmMmZkYmMwMzc3YWIiLCJpYXQiOjE3MjE0NDE3MjAuMDE3MTkxLCJuYmYiOjE3MjE0NDE3MjAuMDE3MTk2LCJleHAiOjE3ODQ1MTM3MjAuMDExNTI2LCJzdWIiOiIxMjYiLCJzY29wZXMiOlsiY2xpZW50ZS10YXJqZXRhcyIsImNsaWVudGUtdHJhbnNhY2Npb25lcyIsImNsaWVudGUtY2xpZW50ZXMiLCJjbGllbnRlLXN1c2NyaXBjaW9uZXMiLCJjbGllbnRlLXBsYW5lcyIsImNsaWVudGUtYW50aWZyYXVkZSIsImNsaWVudGUtd2ViaG9va3MiXX0.jzCf5AFt30FkaEZFuJdK9KZHVVxkLRP6oBGDr4Jdlhz4CtVj5_2V8acSax4jyHyAdsOkMt9ANyyZlciX_6UHHEO5bsmVBeuAAX125jcsqH1Tyac7NU3qKAfQdPGHarWGXqrHvDz6DBICgTYiLIBWRZROE9Ctue6ooj-rpyFxC3GU7nFzLie4NtSsK9AQXb5kSQUXb3cuPA_UI6BMANZRHyxpzxcIAl3I_NC6xFSU5F6q6MoZV4cO8S5FCyjAStpp8RaCPQrPa1UlgfM4l5q8fAhVNwvmp1-C28t7yXC7WQewbNemqn0uSIH2o-8g1N98QT9axS-Oss3R9TE2k6vW2LL-um2b1vLW60zNp0mmZ4_eGpU4q0KL6bEAapKtiHVsfwIwBobWwkyhQbibaxs88SdA76ewKJzMuIHnzpvg_Nc8tO80Bv3hiqCkOTU-YFjY3EEJvHGBnQj-f2swXq5HvQYqRjRk5nutjcmc7NfyKLjfm2TEihOIoy4MKNMZ6FYeWf_4GUzFK720_Q5JPNSXiUUs7SeMCmohpagVmGA3-mirFc5CbSrMyMiVqAwQeXiKTe6J__lWkWCA1Z8KEmA3KqRNl3en_0Dc-wdO7oroOo63iRzylxw0BEU4L4EEjdF63sMoNbWDnpuY1GLZ-zOMLEtMlLbZYMuoQbsXT6PfwMg"
+        : "";
     const response = await fetch(paymentUrl, {
       method: "POST",
-      body: JSON.stringify({ monto: amountDue, token: authToken }),
+      body: JSON.stringify({
+        monto: amountDue.toString(),
+        pais: "MEX",
+        moneda: "MXN",
+        descripcion: "string",
+        capturar: true,
+        incluir_riesgo: true,
+        uso_antifraude: true,
+        metodo_pago: "tarjeta",
+        tarjeta: {
+          token: authToken,
+        },
+        pedido: {
+          id_externo: "string",
+          creacion: "2024-09-18T14:15:22Z",
+          direccion_envio: {
+            linea1: "string",
+            linea2: "string",
+            linea3: "string",
+            cp: "string",
+            telefono: {
+              tipo: "no_definido",
+              codigo_pais: "string",
+              codigo_area: "string",
+              prefijo: "string",
+              numero: "5566778899",
+              extension: 0,
+            },
+            municipio: "string",
+            ciudad: "string",
+            estado: "str",
+            pais: "str",
+            referencia_1: "string",
+            referencia_2: "string",
+            longitud: -90,
+            latitud: -90,
+            nombre: cardHoldersName,
+            apellido_paterno: lastName,
+            apellido_materno: secondLastName,
+          },
+          peso: 0,
+          articulos: [
+            {
+              id_pedido: "string",
+              nombre_producto: "string",
+              descripcion_producto: "string",
+              sku: "string",
+              ean_upc: "string",
+              tipo_producto: "digital",
+              cantidad: 0,
+              precio_unitario: 0,
+              precio_total: 0,
+              otros: "string",
+              es_digital: true,
+            },
+          ],
+          total_articulos: 0,
+          fecha_creacion: "2024-09-18T14:15:22Z",
+          fecha_entrega: "2024-09-18T14:15:22Z",
+          empresa_envio: "noventamin",
+          numero_guia: "string",
+          es_regalo: true,
+          monto_articulos: 0,
+          monto_envio: 0,
+          total_monto: 0,
+          device_fingerprint: "string",
+          ip_cliente: "192.168.0.1",
+          datos_comercio: {
+            "1": "test string",
+            "2": "another string",
+          },
+        },
+        cliente: {
+          id: "string",
+          id_externo: "string",
+          creacion_externa: "2024-09-18T14:15:22Z",
+          nombre: cardHoldersName,
+          apellido_paterno: lastName,
+          apellido_materno: secondLastName,
+          email: "usuario@t1pagos.com",
+          telefono: {
+            tipo: "no_definido",
+            codigo_pais: "string",
+            codigo_area: "string",
+            prefijo: "string",
+            numero: "5566778899",
+            extension: 0,
+          },
+          direccion: {
+            linea1: "string",
+            linea2: "string",
+            linea3: "string",
+            cp: "string",
+            telefono: {
+              tipo: "no_definido",
+              codigo_pais: "string",
+              codigo_area: "string",
+              prefijo: "string",
+              numero: "5566778899",
+              extension: 0,
+            },
+            municipio: "string",
+            ciudad: "string",
+            estado: "str",
+            pais: "str",
+            referencia_1: "string",
+            referencia_2: "string",
+            longitud: -90,
+            latitud: -90,
+          },
+        },
+      }),
       headers: { "Content-Type": "application/json" },
     });
     const apiData = await response.json();
@@ -42,7 +158,7 @@ export default function Home() {
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <div className="flex flex-col justify-center items-start md:items-center w-[400px] md:w-[700px]">
-          <h2 className="block text-5xl my-[2%]">
+          <h2 className="block text-2xl md:text-5xl my-[2%]">
             MXN{mexicanPeso.format(amountDue)}
           </h2>
           <h2 className="block text-3xl my-[5%] mx-[10%]">Datos de Pago</h2>
@@ -51,10 +167,16 @@ export default function Home() {
             className="flex flex-col justify-center items-center"
           >
             <div className="flex flex-row flex-wrap justify-between items-center bg-transparent mb-[2%] py-[7px] px-[3%]">
-              <label htmlFor="nombre-titular" className="text-lg mr-[20%]">
-                Nombre del Titular
+              <label htmlFor="nombre" className="text-md">
+                Nombre
               </label>
-              <label htmlFor="cvv" className="text-lg ml-[13%]">
+              <label htmlFor="apellido_paterno" className="text-md ml-[5%]">
+                Apellido Paterno
+              </label>
+              <label htmlFor="apellido_materno" className="text-md ml-[-2%]">
+                Apellido Materno
+              </label>
+              <label htmlFor="cvv" className="hidden md:flex text-md mr-[8%]">
                 CVV
               </label>
               <br />
@@ -62,6 +184,14 @@ export default function Home() {
                 <CardHoldersName
                   cardHoldersName={cardHoldersName}
                   setHoldersName={setHoldersName}
+                />
+                <CardHoldersLastName
+                  lastName={lastName}
+                  setLastName={setLastName}
+                />
+                <CardHoldersSecondLastName
+                  secondLastName={secondLastName}
+                  setSecondLastName={setSecondLastName}
                 />
                 <Cvv cvv={cvv} setCvv={setCvv} />
               </div>

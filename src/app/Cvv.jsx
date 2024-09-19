@@ -1,7 +1,7 @@
 export default function Cvv({cvv, setCvv}) {
     return (<div>
         <input
-                  placeholder="123"
+                  placeholder="CVV"
                   name="cvv"
                   type="tel"
                   maxLength={4}
