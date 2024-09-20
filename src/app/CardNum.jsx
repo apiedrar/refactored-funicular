@@ -1,6 +1,6 @@
 export default function CardNum({cardNumber, setCardNumber}) {
     return (<div>
-        <label htmlFor="pan" className="text-lg">
+        <label htmlFor="pan" className="text-md">
                 Número de la Tarjeta
               </label>
               <br />
@@ -15,7 +15,7 @@ export default function CardNum({cardNumber, setCardNumber}) {
                   maxLength={16}
                   value={cardNumber}
                   onChange={(e) => setCardNumber(e.target.value)}
-                  className="inline p-[0.8rem] font-normal text-black w-[100%] h-[3.5rem] w-[24rem] md:w-[35.5rem] border border-current rounded"
+                  className="block p-[0.7rem] font-normal text-black w-[100%] h-[3.5rem] w-[24rem] md:w-[35.5rem] border border-current rounded md:mr-[5.35rem]"
                   required
                 />
     </div>)

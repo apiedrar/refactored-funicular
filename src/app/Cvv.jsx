@@ -1,6 +1,6 @@
 export default function Cvv({cvv, setCvv}) {
     return (<div>
-        <label htmlFor="cvv" className="hidden md:flex text-md">
+        <label htmlFor="cvv" className="text-md">
                 CVV
               </label>
               <br />

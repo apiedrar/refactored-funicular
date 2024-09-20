@@ -1,6 +1,6 @@
 export default function ExpirationDate({expiringMonth, setExpiringMonth, expiringYear, setExpiringYear }) {
 return (<div className="flex flex-row">
-          <label htmlFor="expiracion_mes" className="text-lg">
+          <label htmlFor="expiracion_mes" className="text-md">
                 Mes Expiración
               </label>
               <br />
@@ -17,7 +17,7 @@ return (<div className="flex flex-row">
                   className="inline p-[0.8rem] font-normal text-black ml-[1%] w-[5rem] md:w-[8rem] h-full border border-current rounded"
                   required
                 />
-                 <label htmlFor="expiracion_anio" className="text-lg">
+                 <label htmlFor="expiracion_anio" className="text-md">
                 Mes Expiración
               </label>
               <br />

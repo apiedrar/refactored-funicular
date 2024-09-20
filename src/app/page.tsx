@@ -24,6 +24,8 @@ export default function Home() {
   const [cardData, setCardData] = useState();
   const [cardToken, setCardToken] = useState("");
   const [paymentId, setPaymentId] = useState("");
+  const [cancellationSuccess, setCancellationSuccess] = useState();
+  const [reimbursementSuccess, setReimbursementSuccess] = useState();
   const [isCancellationRequested, setIsCancellationRequested] = useState(false);
   const [isReimbursementRequested, setIsReimbursementRequested] =
     useState(false);
@@ -50,13 +52,12 @@ export default function Home() {
           expiracion_mes: expiringMonth,
           expiracion_anio: expiringYear,
           cvv2: cvv,
-          default: true,
         }),
       });
       const cardData = await validationToken.json();
       setCardData(cardData);
 
-      setCardToken(cardData.data.tarjeta.token);
+      const token = cardData.data.tarjeta.token;
       const paymentValidation = await fetch(paymentUrl, {
         method: "POST",
         headers: {
@@ -71,7 +72,7 @@ export default function Home() {
           },
           metodo_pago: "tarjeta",
           tarjeta: {
-            token: cardToken,
+            token: token,
           },
         }),
       });
@@ -80,23 +81,13 @@ export default function Home() {
       setApiData(apiData);
 
       setApiDataStatus(apiData.status);
-      if (apiData?.data?.cargo?.id) {
-        setPaymentId(apiData.data.cargo.id);
-        console.log("Payment ID:", apiData.data.cargo.id);
-      } else {
-        console.log("Payment ID is not available");
-      }
+      setPaymentId(apiData.data.cargo.id);
     } catch (e) {
       console.log(e);
     }
   };
 
   const cancelPayment = async () => {
-    if (!paymentId) {
-      console.log("Payment ID is not available yet.");
-      return;
-    }
-
     const paymentCancellationUrl = `https://api.sandbox.claropagos.com/v1/cargo/${paymentId}/cancelar`;
 
     try {
@@ -110,20 +101,16 @@ export default function Home() {
       });
 
       const cancellationResult = await paymentCancellation.json();
-      console.log("Cancellation result:", cancellationResult);
+      console.log(cancellationResult);
+      setCancellationSuccess(cancellationResult.status);
     } catch (error) {
-      console.error("Error during payment cancellation:", error);
+      console.error("Error en la cancelación del pago", error);
     }
 
     setIsCancellationRequested(false);
   };
 
   const reimbursePayment = async () => {
-    if (!paymentId) {
-      console.log("Payment ID is not available yet.");
-      return;
-    }
-
     const reimbursementRequestUrl = `https://api.sandbox.claropagos.com/v1/cargo/${paymentId}/reembolsar`;
 
     try {
@@ -137,9 +124,10 @@ export default function Home() {
       });
 
       const reimbursementResponse = await reimbursementRequest.json();
-      console.log("Reimbursement result:", reimbursementResponse);
+      console.log(reimbursementResponse);
+      setReimbursementSuccess(reimbursementResponse.status);
     } catch (error) {
-      console.error("Error during reimbursement:", error);
+      console.error("Error en la emisión del reembolso:", error);
     }
 
     setIsReimbursementRequested(false);
@@ -147,7 +135,7 @@ export default function Home() {
 
   const handleCancellationRequest = () => {
     if (!paymentId) {
-      console.log("Payment ID is not available yet.");
+      console.log("El Id del cargo aún no está disponible.");
     } else {
       setIsCancellationRequested(true);
       cancelPayment();
@@ -156,7 +144,7 @@ export default function Home() {
 
   const handleReimbursementRequest = () => {
     if (!paymentId) {
-      console.log("Payment ID is not available yet.");
+      console.log("El Id del cargo aún no está disponible.");
     } else {
       setIsReimbursementRequested(true);
       reimbursePayment();
@@ -179,7 +167,31 @@ export default function Home() {
                 Tu pago ha sido rechazado
               </label>
             ) : (
-              <label className="text-md">Procesando el pago...</label>
+              ""
+            )}
+            <br />
+            {cancellationSuccess === "success" ? (
+              <label className="text-md">Tu pago ha sido cancelado</label>
+            ) : cancellationSuccess === "error" ? (
+              <label className="text-md text-red-500">
+                Hubo un error en la cancelación de tu pago. Favor de contactar
+                soporte técnico.
+              </label>
+            ) : (
+              ""
+            )}
+            <br />
+            {reimbursementSuccess === "success" ? (
+              <label className="text-md">
+                Tu reembolso ha sido emitido con éxito
+              </label>
+            ) : reimbursementSuccess === "error" ? (
+              <label className="text-md text-red-500">
+                Hubo un error emitiendo tu reembolso. Favor de contactar soporte
+                técnico.
+              </label>
+            ) : (
+              ""
             )}
           </div>
           <form
@@ -187,7 +199,7 @@ export default function Home() {
             className="flex flex-col justify-center items-center"
           >
             <div className="flex flex-row flex-wrap justify-between items-center bg-transparent mb-[2%] py-[7px] px-[3%]">
-              <div className="flex flex-row justify-center items-center">
+              <div className="flex flex-row w-full justify-center items-center">
                 <CardHoldersName
                   cardHoldersName={cardHoldersName}
                   setHoldersName={setHoldersName}
@@ -196,23 +208,23 @@ export default function Home() {
               </div>
             </div>
             <div className="flex flex-row flex-wrap justify- items-center bg-transparent mb-[2%] py-[7px] px-[3%]">
-              <div className="flex flex-row w-full">
+              <div className="flex flex-row w-full justify-center items-center">
                 <CardNum
                   cardNumber={cardNumber}
                   setCardNumber={setCardNumber}
                 />
               </div>
             </div>
-            <div className="flex flex-row flex-wrap justify-start items-center bg-transparent mb-[2%] py-[7px] px-[3%]">
-              <div className="flex flex-row ml-[1%]">
+            <div className="flex flex-row flex-wrap justify-center items-center bg-transparent mb-[2%]">
+              <div className="flex flex-row w-full justify-center items-center">
                 <ExpirationDate
                   expiringMonth={expiringMonth}
                   setExpiringMonth={setExpiringMonth}
                   expiringYear={expiringYear}
                   setExpiringYear={setExpiringYear}
                 />
-                <CardCompanies />
               </div>
+              <CardCompanies />
             </div>
             <button className="flex justify-center items-center self-center text-white bg-red-600 w-[90%] md:w-[4rem] h-[3rem] px-[25%] py-[2%] mx-[10%] mb-[5%] rounded">
               Pagar
@@ -288,7 +300,3 @@ export default function Home() {
     </div>
   );
 }
-
-/* 
-
- */
