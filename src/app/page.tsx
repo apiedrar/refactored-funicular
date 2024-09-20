@@ -1,8 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CardHoldersName from "./CardHoldersName.jsx";
-import CardHoldersLastName from "./CardHoldersLastName.jsx";
-import CardHoldersSecondLastName from "./CardHoldersSecondLastName.jsx";
 import Cvv from "./Cvv.jsx";
 import CardNum from "./CardNum.jsx";
 import ExpirationDate from "./ExpirationDate.jsx";
@@ -17,64 +15,152 @@ export default function Home() {
     maximumFractionDigits: 2,
   });
   const [cardHoldersName, setHoldersName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [secondLastName, setSecondLastName] = useState("");
-  const [cvv, setCvv] = useState(undefined);
   const [cardNumber, setCardNumber] = useState("");
+  const [cvv, setCvv] = useState(undefined);
   const [expiringMonth, setExpiringMonth] = useState(undefined);
   const [expiringYear, setExpiringYear] = useState(undefined);
+  const [apiData, setApiData] = useState();
+  const [apiDataStatus, setApiDataStatus] = useState();
+  const [cardData, setCardData] = useState();
+  const [cardToken, setCardToken] = useState("");
+  const [paymentId, setPaymentId] = useState("");
+  const [isCancellationRequested, setIsCancellationRequested] = useState(false);
+  const [isReimbursementRequested, setIsReimbursementRequested] =
+    useState(false);
 
-  function generateDeviceFingerprint(length = 19) {
-    return Array.from({ length }, () => Math.floor(Math.random() * 10)).join(
-      ""
-    );
-  }
+  const authToken =
+    "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiMjExNDNiZDllMDBmYWRhZDc2MmE1NWJiNWQ2NTUwNGFlOTAzZjMwYThlNjZhMjVmNzA3NjUyYTk3YjBjN2U5Y2U1MTVmMmZkYmMwMzc3YWIiLCJpYXQiOjE3MjE0NDE3MjAuMDE3MTkxLCJuYmYiOjE3MjE0NDE3MjAuMDE3MTk2LCJleHAiOjE3ODQ1MTM3MjAuMDExNTI2LCJzdWIiOiIxMjYiLCJzY29wZXMiOlsiY2xpZW50ZS10YXJqZXRhcyIsImNsaWVudGUtdHJhbnNhY2Npb25lcyIsImNsaWVudGUtY2xpZW50ZXMiLCJjbGllbnRlLXN1c2NyaXBjaW9uZXMiLCJjbGllbnRlLXBsYW5lcyIsImNsaWVudGUtYW50aWZyYXVkZSIsImNsaWVudGUtd2ViaG9va3MiXX0.jzCf5AFt30FkaEZFuJdK9KZHVVxkLRP6oBGDr4Jdlhz4CtVj5_2V8acSax4jyHyAdsOkMt9ANyyZlciX_6UHHEO5bsmVBeuAAX125jcsqH1Tyac7NU3qKAfQdPGHarWGXqrHvDz6DBICgTYiLIBWRZROE9Ctue6ooj-rpyFxC3GU7nFzLie4NtSsK9AQXb5kSQUXb3cuPA_UI6BMANZRHyxpzxcIAl3I_NC6xFSU5F6q6MoZV4cO8S5FCyjAStpp8RaCPQrPa1UlgfM4l5q8fAhVNwvmp1-C28t7yXC7WQewbNemqn0uSIH2o-8g1N98QT9axS-Oss3R9TE2k6vW2LL-um2b1vLW60zNp0mmZ4_eGpU4q0KL6bEAapKtiHVsfwIwBobWwkyhQbibaxs88SdA76ewKJzMuIHnzpvg_Nc8tO80Bv3hiqCkOTU-YFjY3EEJvHGBnQj-f2swXq5HvQYqRjRk5nutjcmc7NfyKLjfm2TEihOIoy4MKNMZ6FYeWf_4GUzFK720_Q5JPNSXiUUs7SeMCmohpagVmGA3-mirFc5CbSrMyMiVqAwQeXiKTe6J__lWkWCA1Z8KEmA3KqRNl3en_0Dc-wdO7oroOo63iRzylxw0BEU4L4EEjdF63sMoNbWDnpuY1GLZ-zOMLEtMlLbZYMuoQbsXT6PfwMg";
 
-  const deviceFingerprint = generateDeviceFingerprint(19);
+  const cardSubmitUrl = "https://api.sandbox.claropagos.com/v1/tarjeta";
 
   const paymentUrl = "https://api.sandbox.claropagos.com/v1/cargo";
-  /* const cancellationReqUrl = `https://api.sandbox.claropagos.com/v1/cargo/${paymentId}/cancelar`;
-  const refundRequestUrl = `https://api.sandbox.claropagos.com/v1/cargo/${paymentId}/reembolsar`; */
 
-  const paymentSubmition = async (e: React.FormEvent<HTMLFormElement>) => {
+  const cardSubmition = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let authToken =
-      cardNumber == "4111111111111111"
-        ? "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiMjExNDNiZDllMDBmYWRhZDc2MmE1NWJiNWQ2NTUwNGFlOTAzZjMwYThlNjZhMjVmNzA3NjUyYTk3YjBjN2U5Y2U1MTVmMmZkYmMwMzc3YWIiLCJpYXQiOjE3MjE0NDE3MjAuMDE3MTkxLCJuYmYiOjE3MjE0NDE3MjAuMDE3MTk2LCJleHAiOjE3ODQ1MTM3MjAuMDExNTI2LCJzdWIiOiIxMjYiLCJzY29wZXMiOlsiY2xpZW50ZS10YXJqZXRhcyIsImNsaWVudGUtdHJhbnNhY2Npb25lcyIsImNsaWVudGUtY2xpZW50ZXMiLCJjbGllbnRlLXN1c2NyaXBjaW9uZXMiLCJjbGllbnRlLXBsYW5lcyIsImNsaWVudGUtYW50aWZyYXVkZSIsImNsaWVudGUtd2ViaG9va3MiXX0.jzCf5AFt30FkaEZFuJdK9KZHVVxkLRP6oBGDr4Jdlhz4CtVj5_2V8acSax4jyHyAdsOkMt9ANyyZlciX_6UHHEO5bsmVBeuAAX125jcsqH1Tyac7NU3qKAfQdPGHarWGXqrHvDz6DBICgTYiLIBWRZROE9Ctue6ooj-rpyFxC3GU7nFzLie4NtSsK9AQXb5kSQUXb3cuPA_UI6BMANZRHyxpzxcIAl3I_NC6xFSU5F6q6MoZV4cO8S5FCyjAStpp8RaCPQrPa1UlgfM4l5q8fAhVNwvmp1-C28t7yXC7WQewbNemqn0uSIH2o-8g1N98QT9axS-Oss3R9TE2k6vW2LL-um2b1vLW60zNp0mmZ4_eGpU4q0KL6bEAapKtiHVsfwIwBobWwkyhQbibaxs88SdA76ewKJzMuIHnzpvg_Nc8tO80Bv3hiqCkOTU-YFjY3EEJvHGBnQj-f2swXq5HvQYqRjRk5nutjcmc7NfyKLjfm2TEihOIoy4MKNMZ6FYeWf_4GUzFK720_Q5JPNSXiUUs7SeMCmohpagVmGA3-mirFc5CbSrMyMiVqAwQeXiKTe6J__lWkWCA1Z8KEmA3KqRNl3en_0Dc-wdO7oroOo63iRzylxw0BEU4L4EEjdF63sMoNbWDnpuY1GLZ-zOMLEtMlLbZYMuoQbsXT6PfwMg"
-        : "5c4a7103-d35f-4136-98be-6210d57b0ca3";
-    const response = await fetch(paymentUrl, {
-      method: "POST",
-      body: JSON.stringify({
-        monto: amountDue,
-        descripcion: "Cargo de prueba",
-        pedido: {
-          device_fingerprint: deviceFingerprint,
+    try {
+      const validationToken = await fetch(cardSubmitUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
         },
-        metodo_pago: "tarjeta",
-        tarjeta: {
-          token: authToken,
-        },
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken}`,
-      },
-    });
-    const apiData = await response.json();
+        body: JSON.stringify({
+          nombre: cardHoldersName,
+          pan: cardNumber,
+          expiracion_mes: expiringMonth,
+          expiracion_anio: expiringYear,
+          cvv2: cvv,
+          default: true,
+        }),
+      });
+      const cardData = await validationToken.json();
+      setCardData(cardData);
 
-    console.log(apiData);
-    /*     const apiDataStatus = apiData.status;
-    const paymentId = apiData.data.cargo.id; */
+      setCardToken(cardData.data.tarjeta.token);
+      const paymentValidation = await fetch(paymentUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          monto: amountDue,
+          descripcion: "Cargo de prueba",
+          pedido: {
+            device_fingerprint: "5834125431628311477",
+          },
+          metodo_pago: "tarjeta",
+          tarjeta: {
+            token: cardToken,
+          },
+        }),
+      });
+      const apiData = await paymentValidation.json();
+      console.log(apiData);
+      setApiData(apiData);
+
+      setApiDataStatus(apiData.status);
+      if (apiData?.data?.cargo?.id) {
+        setPaymentId(apiData.data.cargo.id);
+        console.log("Payment ID:", apiData.data.cargo.id);
+      } else {
+        console.log("Payment ID is not available");
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
-  const handlePaymentCancellation = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
+  const cancelPayment = async () => {
+    if (!paymentId) {
+      console.log("Payment ID is not available yet.");
+      return;
+    }
+
+    const paymentCancellationUrl = `https://api.sandbox.claropagos.com/v1/cargo/${paymentId}/cancelar`;
+
+    try {
+      const paymentCancellation = await fetch(paymentCancellationUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ monto: amountDue }),
+      });
+
+      const cancellationResult = await paymentCancellation.json();
+      console.log("Cancellation result:", cancellationResult);
+    } catch (error) {
+      console.error("Error during payment cancellation:", error);
+    }
+
+    setIsCancellationRequested(false);
   };
 
-  const handleReimbursement = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const reimbursePayment = async () => {
+    if (!paymentId) {
+      console.log("Payment ID is not available yet.");
+      return;
+    }
+
+    const reimbursementRequestUrl = `https://api.sandbox.claropagos.com/v1/cargo/${paymentId}/reembolsar`;
+
+    try {
+      const reimbursementRequest = await fetch(reimbursementRequestUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ monto: amountDue }),
+      });
+
+      const reimbursementResponse = await reimbursementRequest.json();
+      console.log("Reimbursement result:", reimbursementResponse);
+    } catch (error) {
+      console.error("Error during reimbursement:", error);
+    }
+
+    setIsReimbursementRequested(false);
+  };
+
+  const handleCancellationRequest = () => {
+    if (!paymentId) {
+      console.log("Payment ID is not available yet.");
+    } else {
+      setIsCancellationRequested(true);
+      cancelPayment();
+    }
+  };
+
+  const handleReimbursementRequest = () => {
+    if (!paymentId) {
+      console.log("Payment ID is not available yet.");
+    } else {
+      setIsReimbursementRequested(true);
+      reimbursePayment();
+    }
   };
 
   return (
@@ -85,46 +171,31 @@ export default function Home() {
             MXN{mexicanPeso.format(amountDue)}
           </h2>
           <h2 className="block text-3xl my-[5%] mx-[10%]">Datos de Pago</h2>
-          {/* {apiDataStatus === "success" ? <label className="text-md">Tu pago ha sido aceptado<label/> : <label className="text-md text-red-500">Tu pago ha sido rechazado<label/>} */}
+          <div>
+            {apiDataStatus === "success" ? (
+              <label className="text-md">Tu pago ha sido aceptado</label>
+            ) : apiDataStatus === "error" ? (
+              <label className="text-md text-red-500">
+                Tu pago ha sido rechazado
+              </label>
+            ) : (
+              <label className="text-md">Procesando el pago...</label>
+            )}
+          </div>
           <form
-            onSubmit={paymentSubmition}
+            onSubmit={cardSubmition}
             className="flex flex-col justify-center items-center"
           >
             <div className="flex flex-row flex-wrap justify-between items-center bg-transparent mb-[2%] py-[7px] px-[3%]">
-              <label htmlFor="nombre" className="text-md">
-                Nombre
-              </label>
-              <label htmlFor="apellido_paterno" className="text-md ml-[5%]">
-                Apellido Paterno
-              </label>
-              <label htmlFor="apellido_materno" className="text-md ml-[-2%]">
-                Apellido Materno
-              </label>
-              <label htmlFor="cvv" className="hidden md:flex text-md mr-[8%]">
-                CVV
-              </label>
-              <br />
               <div className="flex flex-row justify-center items-center">
                 <CardHoldersName
                   cardHoldersName={cardHoldersName}
                   setHoldersName={setHoldersName}
                 />
-                <CardHoldersLastName
-                  lastName={lastName}
-                  setLastName={setLastName}
-                />
-                <CardHoldersSecondLastName
-                  secondLastName={secondLastName}
-                  setSecondLastName={setSecondLastName}
-                />
                 <Cvv cvv={cvv} setCvv={setCvv} />
               </div>
             </div>
             <div className="flex flex-row flex-wrap justify- items-center bg-transparent mb-[2%] py-[7px] px-[3%]">
-              <label htmlFor="pan" className="text-lg">
-                Número de la Tarjeta
-              </label>
-              <br />
               <div className="flex flex-row w-full">
                 <CardNum
                   cardNumber={cardNumber}
@@ -133,13 +204,6 @@ export default function Home() {
               </div>
             </div>
             <div className="flex flex-row flex-wrap justify-start items-center bg-transparent mb-[2%] py-[7px] px-[3%]">
-              <label htmlFor="expiracion_mes" className="text-lg mx-[1%]">
-                Mes Expiración
-              </label>
-              <label htmlFor="expiracion_anio" className="text-lg mx-[1%]">
-                Año Expiración
-              </label>
-              <br />
               <div className="flex flex-row ml-[1%]">
                 <ExpirationDate
                   expiringMonth={expiringMonth}
@@ -154,7 +218,24 @@ export default function Home() {
               Pagar
             </button>
           </form>
-          <div></div>
+          <div className="flex flex-row justify-evenly items-center w-full">
+            {apiDataStatus === "success" ? (
+              <>
+                <button
+                  onClick={handleCancellationRequest}
+                  className="flex justify-center items-center self-center text-white bg-yellow-600 w-[40%] md:w-[50%] h-[3rem] px-[13%] py-[1%] mx-[5%] mb-[2%] rounded"
+                >
+                  Solicitar Cancelación
+                </button>
+                <button
+                  onClick={handleReimbursementRequest}
+                  className="flex justify-center items-center self-center text-white bg-green-600 w-[40%] md:w-[50%] h-[3rem] px-[13%] py-[1%] mx-[5%] mb-[2%] rounded"
+                >
+                  Solicitar Reembolso
+                </button>
+              </>
+            ) : null}
+          </div>
         </div>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
@@ -207,3 +288,7 @@ export default function Home() {
     </div>
   );
 }
+
+/* 
+
+ */

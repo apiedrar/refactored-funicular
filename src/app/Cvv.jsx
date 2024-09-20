@@ -1,9 +1,14 @@
 export default function Cvv({cvv, setCvv}) {
     return (<div>
+        <label htmlFor="cvv" className="hidden md:flex text-md">
+                CVV
+              </label>
+              <br />
         <input
                   placeholder="CVV"
                   name="cvv"
-                  type="tel"
+                  type="num"
+                  inputMode="numeric"
                   maxLength={4}
                   value={cvv}
                   onChange={(e) => setCvv(e.target.value)}
