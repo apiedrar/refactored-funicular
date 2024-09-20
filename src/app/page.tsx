@@ -25,9 +25,6 @@ export default function Home() {
   const [paymentId, setPaymentId] = useState("");
   const [cancellationSuccess, setCancellationSuccess] = useState();
   const [reimbursementSuccess, setReimbursementSuccess] = useState();
-  const [isCancellationRequested, setIsCancellationRequested] = useState(false);
-  const [isReimbursementRequested, setIsReimbursementRequested] =
-    useState(false);
 
   const authToken =
     "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiMjExNDNiZDllMDBmYWRhZDc2MmE1NWJiNWQ2NTUwNGFlOTAzZjMwYThlNjZhMjVmNzA3NjUyYTk3YjBjN2U5Y2U1MTVmMmZkYmMwMzc3YWIiLCJpYXQiOjE3MjE0NDE3MjAuMDE3MTkxLCJuYmYiOjE3MjE0NDE3MjAuMDE3MTk2LCJleHAiOjE3ODQ1MTM3MjAuMDExNTI2LCJzdWIiOiIxMjYiLCJzY29wZXMiOlsiY2xpZW50ZS10YXJqZXRhcyIsImNsaWVudGUtdHJhbnNhY2Npb25lcyIsImNsaWVudGUtY2xpZW50ZXMiLCJjbGllbnRlLXN1c2NyaXBjaW9uZXMiLCJjbGllbnRlLXBsYW5lcyIsImNsaWVudGUtYW50aWZyYXVkZSIsImNsaWVudGUtd2ViaG9va3MiXX0.jzCf5AFt30FkaEZFuJdK9KZHVVxkLRP6oBGDr4Jdlhz4CtVj5_2V8acSax4jyHyAdsOkMt9ANyyZlciX_6UHHEO5bsmVBeuAAX125jcsqH1Tyac7NU3qKAfQdPGHarWGXqrHvDz6DBICgTYiLIBWRZROE9Ctue6ooj-rpyFxC3GU7nFzLie4NtSsK9AQXb5kSQUXb3cuPA_UI6BMANZRHyxpzxcIAl3I_NC6xFSU5F6q6MoZV4cO8S5FCyjAStpp8RaCPQrPa1UlgfM4l5q8fAhVNwvmp1-C28t7yXC7WQewbNemqn0uSIH2o-8g1N98QT9axS-Oss3R9TE2k6vW2LL-um2b1vLW60zNp0mmZ4_eGpU4q0KL6bEAapKtiHVsfwIwBobWwkyhQbibaxs88SdA76ewKJzMuIHnzpvg_Nc8tO80Bv3hiqCkOTU-YFjY3EEJvHGBnQj-f2swXq5HvQYqRjRk5nutjcmc7NfyKLjfm2TEihOIoy4MKNMZ6FYeWf_4GUzFK720_Q5JPNSXiUUs7SeMCmohpagVmGA3-mirFc5CbSrMyMiVqAwQeXiKTe6J__lWkWCA1Z8KEmA3KqRNl3en_0Dc-wdO7oroOo63iRzylxw0BEU4L4EEjdF63sMoNbWDnpuY1GLZ-zOMLEtMlLbZYMuoQbsXT6PfwMg";
@@ -129,12 +126,10 @@ export default function Home() {
   };
 
   const handleCancellationRequest = () => {
-    setIsCancellationRequested(true);
     cancelPayment();
   };
 
   const handleReimbursementRequest = () => {
-    setIsReimbursementRequested(true);
     reimbursePayment();
   };
 
@@ -228,7 +223,7 @@ export default function Home() {
                 </button>
                 <button
                   onClick={handleReimbursementRequest}
-                  className="flex justify-center items-center self-center text-white bg-green-600 w-[40%] md:w-[50%] h-[3rem] px-[13%] py-[1%] mx-[5%] mb-[2%] rounded"
+                  className="flex justify-center items-center self-center text-white bg-green-500 w-[40%] md:w-[50%] h-[3rem] px-[13%] py-[1%] mx-[5%] mb-[2%] rounded"
                 >
                   Solicitar Reembolso
                 </button>
