@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import CardHoldersName from "./CardHoldersName.jsx";
 import Cvv from "./Cvv.jsx";
 import CardNum from "./CardNum.jsx";
