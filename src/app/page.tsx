@@ -22,7 +22,6 @@ export default function Home() {
   const [apiData, setApiData] = useState();
   const [apiDataStatus, setApiDataStatus] = useState();
   const [cardData, setCardData] = useState();
-  const [cardToken, setCardToken] = useState("");
   const [paymentId, setPaymentId] = useState("");
   const [cancellationSuccess, setCancellationSuccess] = useState();
   const [reimbursementSuccess, setReimbursementSuccess] = useState();
@@ -80,7 +79,7 @@ export default function Home() {
       console.log(apiData);
       setApiData(apiData);
 
-      setApiDataStatus(apiData.status);
+      setApiDataStatus(apiData.data.cargo.estatus);
       setPaymentId(apiData.data.cargo.id);
     } catch (e) {
       console.log(e);
@@ -106,8 +105,6 @@ export default function Home() {
     } catch (error) {
       console.error("Error en la cancelación del pago", error);
     }
-
-    setIsCancellationRequested(false);
   };
 
   const reimbursePayment = async () => {
@@ -129,26 +126,16 @@ export default function Home() {
     } catch (error) {
       console.error("Error en la emisión del reembolso:", error);
     }
-
-    setIsReimbursementRequested(false);
   };
 
   const handleCancellationRequest = () => {
-    if (!paymentId) {
-      console.log("El Id del cargo aún no está disponible.");
-    } else {
-      setIsCancellationRequested(true);
-      cancelPayment();
-    }
+    setIsCancellationRequested(true);
+    cancelPayment();
   };
 
   const handleReimbursementRequest = () => {
-    if (!paymentId) {
-      console.log("El Id del cargo aún no está disponible.");
-    } else {
-      setIsReimbursementRequested(true);
-      reimbursePayment();
-    }
+    setIsReimbursementRequested(true);
+    reimbursePayment();
   };
 
   return (
@@ -160,9 +147,9 @@ export default function Home() {
           </h2>
           <h2 className="block text-3xl my-[5%] mx-[10%]">Datos de Pago</h2>
           <div>
-            {apiDataStatus === "success" ? (
+            {apiDataStatus === "completada" ? (
               <label className="text-md">Tu pago ha sido aceptado</label>
-            ) : apiDataStatus === "error" ? (
+            ) : apiDataStatus === "error" || apiDataStatus === "rechazada" ? (
               <label className="text-md text-red-500">
                 Tu pago ha sido rechazado
               </label>
@@ -231,7 +218,7 @@ export default function Home() {
             </button>
           </form>
           <div className="flex flex-row justify-evenly items-center w-full">
-            {apiDataStatus === "success" ? (
+            {apiDataStatus === "completada" ? (
               <>
                 <button
                   onClick={handleCancellationRequest}
